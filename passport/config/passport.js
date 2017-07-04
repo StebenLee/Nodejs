@@ -1,13 +1,13 @@
-import LocalStrategy from 'passport-local'.Strategy;
-import FacebookStrategy from 'passport-facebook'.Strategy;
-import TwitterStrategy from 'passport-twitter'.Strategy;
-import GoogleStrategy from 'passport-google-oauth'.Strategy;
+import { Strategy as LocalStrategy } from 'passport-local';
+import { Strategy as FacebookStrategy } from 'passport-facebook';
+import { Strategy as TwitterStrategy } from 'passport-twitter';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth';
 
 import User from '../models/user';
 
 import configAuth from './auth';
 
-export default function(passport) {
+module.exports = function(passport) {
 
 	passport.serializeUser(function(user, done) {
 	  done(null, user.id);
@@ -24,7 +24,7 @@ export default function(passport) {
 		passwordField : 'password',
 		passReqToCallback : true
 	},
-	function(req, emailm password, done) {
+	function(req, email, password, done) {
 		if(email)
 			email = email.toLowerCase();
 
@@ -185,10 +185,10 @@ export default function(passport) {
 
 			//check if the user is already logged in
 			if (!req.user) {
-				User.findOne({ 'twitter.id : profile.id'}, function(err, user) {
+				User.findOne({ 'twitter.id' : profile.id }, function(err, user) {
 					if(err)
 						return done(err);
-					if(user {
+					if(user) {
 						//if there is a user id already but no token
 						if(!user.twitter.token) {
 							user.twitter.token = token;
@@ -216,7 +216,7 @@ export default function(passport) {
 								return done(null, newUser);
 							});
 						}
-					});
+					}
 				});
 			} else {
 				//user already exists and is logged in, we have to link accounts
