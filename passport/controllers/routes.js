@@ -68,7 +68,7 @@ module.exports = function(app, passport) {
 	//the callback after google has authenticated the user
 	app.get('/auth/google/callback',
 	  passport.authenticate('google', {
-	    successRedirect: 'profile',
+	    successRedirect: '/profile',
 	    failureRedirect: '/'
 	  }));
 
@@ -130,7 +130,7 @@ module.exports = function(app, passport) {
 	});
 
 	//facebook-------------------------------------------
-	app.get('/unlink/local', isLoggedIn, function(req, res) {
+	app.get('/unlink/facebook', isLoggedIn, function(req, res) {
 	  var user = req.user;
 	  user.facebook.token = undefined;
 	  user.save(function(err) {
@@ -139,7 +139,7 @@ module.exports = function(app, passport) {
 	});
 
 	//twitter---------------------------------------------
-	app.get('/unlink/facebook', isLoggedIn, function(req, res) {
+	app.get('/unlink/twitter', isLoggedIn, function(req, res) {
 	  var user = req.user;
 	  user.twitter.token = undefined;
 	  user.save(function(err) {

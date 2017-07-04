@@ -10,7 +10,7 @@ import session from 'express-session';
 import configDB from './config/database.js';
 
 const app = new Express();
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 8080;
 
 mongoose.connect(configDB.url); ;// connect to database
 require('./config/passport')(passport);
