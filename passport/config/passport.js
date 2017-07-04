@@ -2,7 +2,6 @@ import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
 import { Strategy as TwitterStrategy } from 'passport-twitter';
 import { OAuth2Strategy as GoogleStrategy } from 'passport-google-oauth';
-//import passpor
 import User from '../models/user';
 
 import configAuth from './auth';
