@@ -5,9 +5,46 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+    body {
+	height: 100%;
+}
+
+.wrap {
+	min-height: 100%;
+	height: 100%;
+}
+
+.footer {
+	height: 60px;
+}
+
+.footer {
+	background-color: #f5f5f5;
+}
+    </style>
 </head>
 <body>
-    <h1>Express</h1>
-    <p>Welcome to Express</p>
+  <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+	  <h1>Welocome to the Chatroom</h1>
+	  <div id="message"></div>
+    </div>
+  </nav>
+  <div class="footer">
+  <nav class="navbar navbar-default navbar-fixed-bottom" role="navigation">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-xs-8 col-sm-9">
+          <input type="text" id="message-box" placeholder="Write a message here..." row="3" class="form-control input-lg"/>
+        </div>
+        <div class="col-xs-4 col-sm-3">
+          <button id="send-message-btn" class="btn btn-primary btn-lg btn-block">Send Message</button>
+        </div>
+      </div>
+    </div>
+   </nav>
+  </div>
 </body>
 </html>
+
