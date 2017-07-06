@@ -3,11 +3,11 @@ const routes = require('./routes');
 const http = require('http');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
+const mongo = require('mongodb').MongoClient;
 const configDB = require('./config/database.js');
 
 const app = new express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3002;
 
 app.set('view engine', 'ejs');
 app.use(morgan('dev'));
@@ -18,36 +18,47 @@ routes(app); // api
 //socket io setting
 const server = http.createServer(app);
 const io = require('socket.io')(server);
-
+app.use('/static', express.static(__dirname + '/public'));
 server.listen(port, function() {
   console.log('listen on ' + port);
 });
 //io 
-io.on('connection', function (socket) { //user come in
-  console.log('a user connected');
+io.on('connection', function(socket) { //user come in
+  
 
-  mongoose.connect(configDB.url, function(err, db) {
-    let collection = db.collection('chat message');
-    let stream = collection.find().sort({ _id : -1 }).limit(10).stream(); //get last 10 messages
-    stream.on('data', function(chat) { socket.emit('chat', chat.content); //io emit the message
+  socket.on('add user', function(msg){
+    socket.username = msg;
+    console.log("new user:"+msg+"logged.");
+    socket.broadcast.emit('add user' ,{
+      username: socket.username
+    });
+  });
+
+  mongo.connect(configDB.url, function(err, db) {
+    let collection = db.collection('chat messages');
+    let stream = collection.find().stream(); //get messages
+    stream.on('data', function(chat) { socket.emit('chat', chat.name+" 說 : "+chat.content ); //io emit the message
 	}); 
   });
 
   socket.on('disconnect', function() { //user leave
-  console.log('a user disconnected');
+  console.log(socket.username+'disconnected');
+      socket.broadcast.emit('user left',{
+        username:socket.username
+      });
   });
 
-  socket.on('chat', function(name, msg) { //user enter message
-    mongoose.connect(configDB.url, function(err, db) {
-	  let collection = db.collection('chat messages');
-	  collection.insert({ username : name, content : msg}, function(err, o) {
-		if (err) {
-		  console.log(err.message);
-		} else { 
-		  console.log("chat message inserted into db:" + msg); }
-	  });
+  socket.on('chat', function(msg) { //user enter message
+    mongo.connect(configDB.url, function(err, db) {
+	    let collection = db.collection('chat messages');
+	    collection.insert({ name : socket.username , content : msg}, function(err, o) {
+		  if (err) {
+		    console.log(err.message);
+		  } else { 
+		    console.log(socket.username +" inserted : "+ msg +" into db"); }
+	    });
     });
-  socket.broadcast.emit('chat', msg);
+    socket.broadcast.emit('chat', socket.username+" 說 : "+msg);
   });
 
 });

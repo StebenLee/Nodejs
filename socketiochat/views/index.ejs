@@ -1,53 +1,131 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Express</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <title>Chatroom</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
     body {
 	height: 100%;
+  font-size:26px;
+    background: url(http://picview.info/download/20150529/spots-background-light-circles-3840x2160.jpg);
+}
+.col-md-6 {
+  background: rgba(122, 130, 136, 0.2)!important;
+}
+.navbar {
+  background: rgba(122, 130, 136, 0.5)!important;
+  height: 60px;
+}
+.col-md-10 {
+  margin-top:7px;
+}
+.form-control {
+  
+}
+.talking {
+  margin-top: 6px;
+  border:2px solid white;
+  background: #ffffff;
+  display: table; 
+  border-radius: 10px;
+  max-width: 300px;
+  background-color: rgba(256, 256, 256, 0.6)!important;
+}
+.me {
+  margin-top: 6px;
+  border:2px solid white;
+  background: #ffffff;
+  border-radius: 10px;
+  display: table; 
+  max-width: 300px;
 }
 
-.wrap {
-	min-height: 100%;
-	height: 100%;
-}
-
-.footer {
-	height: 60px;
-}
-
-.footer {
-	background-color: #f5f5f5;
-}
     </style>
 </head>
 <body>
   <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-    <div class="container-fluid">
-	  <h1>Welocome to the Chatroom</h1>
-	  <div id="message"></div>
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">
+       <img class="img-responsive" src="static/logo3.png" alt="CrazyC" width="45" height="40"></img>
+      </a>
     </div>
+    </ul>
   </nav>
-  <div class="footer">
+  <div class="row">
+  <div class="col-md-6 col-md-offset-3">
+  <br><br>
+        <div id="messages"></div>
+    <br><br>
+    <div>
+
   <nav class="navbar navbar-default navbar-fixed-bottom" role="navigation">
     <div class="container-fluid">
       <div class="row">
-        <div class="col-xs-8 col-sm-9">
-          <input type="text" id="message-box" placeholder="Write a message here..." row="3" class="form-control input-lg"/>
-        </div>
-        <div class="col-xs-4 col-sm-3">
-          <button id="send-message-btn" class="btn btn-primary btn-lg btn-block">Send Message</button>
+        <div class="col-md-10 col-md-offset-1">
+          <input type="text" id="message-box"  placeholder="Write a message here..." class="form-control input-lg"/>
         </div>
       </div>
     </div>
    </nav>
-  </div>
+   </div>
+   </div>
+      <script src='http://code.jquery.com/jquery-latest.min.js'></script>
+      <script src="/socket.io/socket.io.js"></script>
+      <script>
+        const socket = io();
+        $(document).ready(function(){
+
+        var name = prompt("請輸入暱稱","陌生人");
+        if(name=="" || name==null) {
+          name = "陌生人"
+        }
+
+        socket.emit("add user", name);
+
+
+        $('#message-box').keydown(function(){
+          if( event.which == 13) {
+            let msg = $('#message-box').val();
+            socket.emit('chat', msg);
+            $('#messages').append($('<div class="me"><p>').text('你 說 : '+msg));
+            $('#message-box').val('');
+            window.scrollTo(0, document.body.scrollHeight);
+            return false;
+          }
+        });
+/*
+        $('#send-message-btn').click(function() {
+          let msg = $('#message-box').val();
+          socket.emit('chat', msg);
+          $('#messages').append($('<p>').text(name + "說 ：" +msg));
+          $('#message-box').val('');
+          window.scrollTo(0, document.body.scrollHeight);
+          return false;
+        });*/
+
+        socket.on('chat', function(msg) {
+          $('#messages').append($('<div class= "talking"><p>').text(msg));
+          window.scrollTo(0, document.body.scrollHeight);
+        });
+
+        socket.on('add user', function(data){
+          appendMessage(data.username+"已加入");
+        });
+
+        socket.on('user left', function(data){
+          appendMessage(data.username+"已離開");
+        });
+
+        function appendMessage(msg){
+          $('#messages').append($('<div class="text-right"><li>').text(msg));
+          let message = document.getElementById("message_block");
+          window.scrollTo(0, document.body.scrollHeight);
+        }
+
+      });
+      </script>
 </body>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script src="/socket.io/socket.io.js"></script>
-<script type='text/javascript' src='../public/socketio.js'></script>
 </html>
 
